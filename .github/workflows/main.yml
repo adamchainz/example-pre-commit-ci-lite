@@ -1,0 +1,36 @@
+name: Main
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+jobs:
+  lint:
+    name: Lint
+    runs-on: ubuntu-22.04
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: actions/setup-python@v4
+        id: setup_python
+        with:
+          python-version: "3.11"
+          cache: pip
+
+      - name: Install pre-commit
+        run: pip install pre-commit
+
+      - name: Cache pre-commit tools
+        uses: actions/cache@v3
+        with:
+          key: pre-commit-${{ runner.os }}-${{ steps.setup_python.outputs.python-version}}-${{ hashFiles('.pre-commit-config.yaml') }}
+          path: ~/.cache/pre-commit
+
+      - name: Run pre-commit
+        run: pre-commit run --all-files
+
+      - uses: pre-commit-ci/lite-action@2529d76d2c5ffdf2a85aa090c38949eada94d39d  # v1.0.1
+        if: always()
