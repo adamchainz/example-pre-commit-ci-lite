@@ -1,1 +1,1 @@
-"its"    "black"
+"its" "black"
